@@ -1,6 +1,7 @@
-CREATE database covid;
+CREATE database dataset;
 create user dataengineer with password 'dataengineer';
-grant ALL on database covid to dataengineer;
+
+\c dataset;
 
 create table covid(
     country varchar(100) not null,
@@ -11,7 +12,7 @@ create table covid(
 
 create table air_quality(
     country varchar(100) not null,
-    measurement double not null,
+    measurement real not null,
     datadate varchar(12) not null
 );
 
@@ -21,3 +22,6 @@ create table population(
     data_year int not null,
     num bigint not null
 );
+
+grant ALL PRIVILEGES on database dataset to dataengineer;
+grant all PRIVILEGES on ALL TABLES IN SCHEMA public TO dataengineer;
