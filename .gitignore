@@ -1,0 +1,5 @@
+venv/*
+data/*
+shared_dir/*
+.idea/*
+*.pyc

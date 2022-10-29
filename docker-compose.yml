@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:14.5
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+ 
+  airflow:
+    build: .
+    image: airflow-local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    tty: true
+    volumes:
+       - ./dags:/root/airflow/dags
+       - ./shared_dir:/shared_dir
+    
+  shared_dir:
+    image: alpine:3.16.2
+    volumes:
+      - ./shared_dir:/shared_dir
+    tty: true
+
+volumes:
+    postgres:
