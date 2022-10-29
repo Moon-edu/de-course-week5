@@ -25,7 +25,7 @@ RUN curl -k https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip
 
 ADD install-airflow.sh /install-airflow.sh
 RUN /install-airflow.sh
-ADD airflow.cfg2 /root/airflow/airflow.cfg
+ADD airflow.cfg /root/airflow/airflow.cfg
 
 ADD entrypoint.sh /entrypoint.sh
 
