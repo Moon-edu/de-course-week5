@@ -19,5 +19,5 @@ def run():
             if not got_header:
                 got_header = True
                 continue
-            data.append(row[3], row[7], row[8], row[4][0:10])
+            data.append((row[3], row[7], row[8], row[4][0:10]))
     export_to_postgres(data)
