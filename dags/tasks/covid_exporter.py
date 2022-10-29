@@ -1,5 +1,3 @@
-import csv
-
 
 def export_to_postgres(data):
     import psycopg
@@ -12,6 +10,7 @@ def export_to_postgres(data):
 
 
 def run():
+    import csv
     data = []
     with open("/shared_dir/covid.csv", "r") as f:
         csv_data = csv.reader(f, delimiter=',')
