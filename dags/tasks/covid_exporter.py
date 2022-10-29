@@ -5,10 +5,10 @@ def run():
     def export_to_postgres(data):
 
 
-        with psycopg.connect("host=postgres_server dbname=dataset "
+        with psycopg.connect("host=postgres.server.local dbname=dataset "
                              + "user=dataengineer password=dataengineer") as conn:
             with conn.cursor() as cur:
-                cur.execute("INSERT INTO covid values(%s, %s, %s, %s)", data)
+                cur.executemany("INSERT INTO covid values(%s, %s, %s, %s)", data)
             conn.commit()
 
     data = []

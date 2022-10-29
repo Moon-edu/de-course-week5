@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  postgres-server:
+  postgres:
     image: postgres:14.5
     environment:
       POSTGRES_USER: airflow
@@ -12,6 +12,10 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
+    hostname: postgres.server.local
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
  
   airflow:
     build: .
@@ -19,11 +23,16 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres-server
+      - postgres
     tty: true
     volumes:
        - ./dags:/root/airflow/dags
        - ./shared_dir:/shared_dir
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+    extra_hosts:
+      - "postgres.server.local:10.5.0.5"
     
   shared_dir:
     image: alpine:3.16.2
@@ -33,3 +42,10 @@ services:
 
 volumes:
     postgres:
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
