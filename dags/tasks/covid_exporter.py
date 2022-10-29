@@ -1,16 +1,16 @@
 
-def export_to_postgres(data):
-    import psycopg
-
-    with psycopg.connect("host=postgres.server.local db=dataset "
-                         + "username=dataengineer password=dataengineer") as conn:
-        with conn.cursor() as cur:
-            cur.execute("INSERT INTO covid values(%s, %s, %s, %s)", data)
-        conn.commit()
-
-
 def run():
     import csv
+    import psycopg
+    def export_to_postgres(data):
+
+
+        with psycopg.connect("host=postgres_server dbname=dataset "
+                             + "user=dataengineer password=dataengineer") as conn:
+            with conn.cursor() as cur:
+                cur.execute("INSERT INTO covid values(%s, %s, %s, %s)", data)
+            conn.commit()
+
     data = []
     with open("/shared_dir/covid.csv", "r") as f:
         csv_data = csv.reader(f, delimiter=',')

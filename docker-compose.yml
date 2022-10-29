@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  postgres:
+  postgres-server:
     image: postgres:14.5
     environment:
       POSTGRES_USER: airflow
@@ -12,7 +12,6 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
-    hostname: postgres.local
  
   airflow:
     build: .
@@ -20,7 +19,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      - postgres-server
     tty: true
     volumes:
        - ./dags:/root/airflow/dags
