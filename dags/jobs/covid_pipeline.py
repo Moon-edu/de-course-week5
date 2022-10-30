@@ -1,31 +1,35 @@
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonVirtualenvOperator
+from airflow.contrib.sensors.file_sensor import FileSensor
 from datetime import datetime, timedelta
-
-COVID_ENDPOINT_TMPL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data" \
-                 + f"/csse_covid_19_daily_reports/%s.csv"
-
-OUTPUT_PATH = "/shared_dir/covid.csv"
 
 with DAG('covid',
          start_date=datetime(2022, 10, 1),
          max_active_runs=3,
-         catchup=False,
-         schedule_interval="0 * * * *") as dag:
-    date_to_download = (datetime.today() - timedelta(days=30)).strftime("%m-%d-%Y")
+         catchup=True,
+         schedule_interval="0 0 * * *") as dag:
+    COVID_ENDPOINT_TMPL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data" \
+                          + f"/csse_covid_19_daily_reports/%s.csv"
 
-    endpoint = COVID_ENDPOINT_TMPL % date_to_download
+    OUTPUT_PATH = "/shared_dir/covid-%s.csv"
+
     downloader = BashOperator(
         task_id='download',
-        bash_command=f'curl -k -o {OUTPUT_PATH} {endpoint}')
+        bash_command=f'curl -k -o {OUTPUT_PATH % "{{ ds }}"} '
+                     + f'{COVID_ENDPOINT_TMPL % """{{ macros.ds_format(ds, "%Y-%m-%d", "%m-%d-%Y") }}"""}')
 
+    file_checker = FileSensor(
+        task_id="file_check", poke_interval=3, filepath="/shared_dir/non-existing.csv"
+    )
     from tasks import covid_exporter
+    from tasks import covid_aggregator
 
     exporter = PythonVirtualenvOperator(
-        task_id='print',
+        task_id='export',
         python_callable=covid_exporter.run,
-        requirements=["psycopg==3.1.4"]
+        requirements=["psycopg==3.1.4"],
+        op_args=['{{ ds }}']
     )
 
-    downloader >> exporter
+    downloader >> file_checker >> exporter

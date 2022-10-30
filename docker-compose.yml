@@ -28,12 +28,13 @@ services:
     volumes:
        - ./dags:/root/airflow/dags
        - ./shared_dir:/shared_dir
+       - ./airflow.cfg:/root/airflow/airflow.cfg
     networks:
       vpcbr:
         ipv4_address: 10.5.0.6
     extra_hosts:
       - "postgres.server.local:10.5.0.5"
-    
+
   shared_dir:
     image: alpine:3.16.2
     volumes:
