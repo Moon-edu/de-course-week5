@@ -3,8 +3,6 @@ def run():
     import csv
     import psycopg
     def export_to_postgres(data):
-
-
         with psycopg.connect("host=postgres.server.local dbname=dataset "
                              + "user=dataengineer password=dataengineer") as conn:
             with conn.cursor() as cur:
