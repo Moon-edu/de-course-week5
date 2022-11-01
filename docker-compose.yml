@@ -36,21 +36,6 @@ services:
     extra_hosts:
       - "postgres.server.local:10.5.0.5"
 
-  shared_dir:
-    image: alpine:3.16.2
-    volumes:
-      - ./shared_dir:/shared_dir
-    tty: true
-  
-  grafana:
-    image: grafana/grafana:9.2.2-ubuntu
-    ports:
-      - 3000:3000
-    depends_on:
-      - postgres
-    networks:
-      vpcbr:
-
 volumes:
     postgres:
 networks:
