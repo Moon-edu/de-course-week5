@@ -11,7 +11,7 @@ def run(datadate):
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT 
-                        country, confirmed, death
+                        country, acc_confirmed, death
                     FROM 
                         covid 
                     WHERE
