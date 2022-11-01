@@ -3,6 +3,10 @@ def run(datadate):
     import psycopg
     from datetime import datetime
     from airflow.hooks.base_hook import BaseHook
+    from airflow.models import Variable
+
+    greeting = Variable.get("GREETING")
+    print(f"Got variable, greeting: {greeting}")
 
     datadate = datetime.strptime(datadate, '%Y-%m-%d')
     print(f"Aggregating data in {datadate}")
