@@ -14,14 +14,14 @@ with DAG('covid',
 
     OUTPUT_PATH = "/shared_dir/covid-%s.csv"
 
-    downloader = BashOperator(
-        task_id='download',
-        bash_command=f'curl -k -o {OUTPUT_PATH % "{{ ds }}"} '
-                     + f'{COVID_ENDPOINT_TMPL % """{{ macros.ds_format(ds, "%Y-%m-%d", "%m-%d-%Y") }}"""}')
-
-    file_checker = FileSensor(
-        task_id="file_check", poke_interval=3, filepath="/shared_dir/non-existing.csv"
-    )
+    # downloader = BashOperator(
+    #     task_id='download',
+    #     bash_command=f'curl -k -o {OUTPUT_PATH % "{{ ds }}"} '
+    #                  + f'{COVID_ENDPOINT_TMPL % """{{ macros.ds_format(ds, "%Y-%m-%d", "%m-%d-%Y") }}"""}')
+    #
+    # file_checker = FileSensor(
+    #     task_id="file_check", poke_interval=3, filepath="/shared_dir/non-existing.csv"
+    # )
     from tasks import covid_exporter
     from tasks import covid_aggregator
 
@@ -32,4 +32,4 @@ with DAG('covid',
         op_args=['{{ ds }}']
     )
 
-    downloader >> file_checker >> exporter
+    # downloader >> exporter

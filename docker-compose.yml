@@ -24,6 +24,7 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+      - grafana
     tty: true
     volumes:
        - ./dags:/root/airflow/dags
@@ -40,6 +41,15 @@ services:
     volumes:
       - ./shared_dir:/shared_dir
     tty: true
+  
+  grafana:
+    image: grafana/grafana:9.2.2-ubuntu
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    networks:
+      vpcbr:
 
 volumes:
     postgres:

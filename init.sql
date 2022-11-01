@@ -5,9 +5,11 @@ create user dataengineer with password 'dataengineer';
 
 create table covid(
     country varchar(100) not null,
-    confirmed int not null,
+    acc_confirmed int not null,
     death int not null,
-    datadate varchar(12) not null
+    recovered int not null,
+    active int not null,
+    datadate timestamp not null
 );
 
 create table air_quality(
