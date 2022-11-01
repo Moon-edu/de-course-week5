@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonVirtualenvOperator
+from airflow.contrib.sensors.file_sensor import FileSensor
 from datetime import datetime
 
 with DAG('covid',
@@ -28,6 +29,10 @@ with DAG('covid',
         op_args=['{{ ds }}']
     )
 
+    file_checker = FileSensor(
+        task_id="file_check", poke_interval=3, filepath="/shared_dir/non-existing.csv"
+    )
+
     aggregator = PythonVirtualenvOperator(
         task_id='aggregator',
         python_callable=covid_aggregator.run,
@@ -35,4 +40,4 @@ with DAG('covid',
         op_args=['{{ ds }}']
     )
 
-    downloader >> exporter >> aggregator
+    downloader >> file_checker >> exporter >> aggregator
