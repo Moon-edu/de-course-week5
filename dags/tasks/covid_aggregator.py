@@ -47,10 +47,11 @@ def run(datadate):
         return country
 
     all_covid_data = get_covid_stat_postgres()
-    total_confirmed = get_total_confirmed(all_covid_data)
-    avg_confirmed = get_avg_confirmed(all_covid_data, total_confirmed)
-    max_conf_ctr = get_country_of_max_confirmed(all_covid_data)
-    max_death_rate_ctr = get_country_of_max_death_rate(all_covid_data)
+
+    total_confirmed = get_total_confirmed(all_covid_data) if len(all_covid_data) else 0
+    avg_confirmed = get_avg_confirmed(all_covid_data, total_confirmed) if len(all_covid_data) else 0
+    max_conf_ctr = get_country_of_max_confirmed(all_covid_data) if len(all_covid_data) else 0
+    max_death_rate_ctr = get_country_of_max_death_rate(all_covid_data) if len(all_covid_data) else 0
 
     print(f"""
         Summary:
