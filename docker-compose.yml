@@ -24,7 +24,6 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
-      - grafana
     tty: true
     volumes:
        - ./dags:/root/airflow/dags
