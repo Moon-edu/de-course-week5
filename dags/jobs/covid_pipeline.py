@@ -19,6 +19,7 @@ with DAG('covid',
                      + f'{COVID_ENDPOINT_TMPL % """{{ macros.ds_format(ds, "%Y-%m-%d", "%m-%d-%Y") }}"""}')
 
     from tasks import covid_exporter
+    from tasks import covid_aggregator
 
     exporter = PythonVirtualenvOperator(
         task_id='export',
@@ -27,4 +28,4 @@ with DAG('covid',
         op_args=['{{ ds }}']
     )
 
-    downloader >> exporter
+    downloader >> exporter >> covid_aggregator
