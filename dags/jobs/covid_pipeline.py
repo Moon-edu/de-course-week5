@@ -31,7 +31,8 @@ with DAG('covid',
     aggregator = PythonVirtualenvOperator(
         task_id='aggregator',
         python_callable=covid_aggregator.run,
-        requirements=["psycopg==3.1.4"]
+        requirements=["psycopg==3.1.4"],
+        op_args=['{{ ds }}']
     )
 
     downloader >> exporter >> aggregator

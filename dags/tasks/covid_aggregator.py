@@ -1,7 +1,10 @@
 
-def run():
+def run(datadate):
     import psycopg
+    from datetime import datetime
 
+    datadate = datetime.strptime(datadate, '%Y-%m-%d')
+    print(f"Aggregating data in {datadate}")
     def get_covid_stat_postgres():
         with psycopg.connect("host=postgres.server.local dbname=dataset "
                              + "user=dataengineer password=dataengineer") as conn:
@@ -11,7 +14,9 @@ def run():
                         country, confirmed, death
                     FROM 
                         covid 
-                """)
+                    WHERE
+                        datadate = %s
+                """, (datadate, ))
                 return cur.fetchall()
 
     def get_total_confirmed(data):
