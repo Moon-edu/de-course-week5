@@ -2,12 +2,15 @@
 def run(datadate):
     import psycopg
     from datetime import datetime
+    from airflow.hooks.base_hook import BaseHook
 
     datadate = datetime.strptime(datadate, '%Y-%m-%d')
     print(f"Aggregating data in {datadate}")
+
     def get_covid_stat_postgres():
-        with psycopg.connect(f"host=postgres.server.local dbname=dataset "
-                             + f"user=dataengineer password=dataengineer") as conn:
+        conn_info = BaseHook.get_connection("job_postgres")
+        with psycopg.connect(f"host={conn_info.host} dbname=dataset "
+                             + f"user={conn_info.login} password={conn_info.password}") as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT 
