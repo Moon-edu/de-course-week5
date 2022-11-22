@@ -31,3 +31,4 @@ ALTER TABLE population OWNER TO dataengineer;
 
 grant ALL PRIVILEGES on database dataset to dataengineer;
 grant all PRIVILEGES on ALL TABLES IN SCHEMA public TO dataengineer;
+

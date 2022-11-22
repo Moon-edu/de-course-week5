@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  postgres-hw:
+    image: postgres:14.5
+    environment:
+      POSTGRES_USER: stock-importer
+      POSTGRES_PASSWORD: stock
+      POSTGRES_DB: stock
+    volumes:
+      - ./init_hw.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432

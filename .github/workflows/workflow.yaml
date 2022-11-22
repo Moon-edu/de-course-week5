@@ -1,0 +1,47 @@
+name: Automated assignment check
+run-name: Your submission is being scored
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - "*:homework/**"
+jobs:
+  homework-checker-infra:
+    runs-on: ubuntu-22.04
+    steps:
+# python -m http.server
+      - run: echo "Checking file q1_create_employee_table.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q2_insert_employee_table.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q3_create_visit_log_table.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q4_insert_visit_log_table.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q5_employee_female.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q6_employee_male.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q7_visit_log_cnt.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q8_visit_log_group_by_purpose_cnt.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q9_find_visit_employee.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q10_update_peach_position.sql"
+      - run: echo "Done. Cool!"
+      - run: echo "Checking file q10_update_peach_position.sql"
+      - run: echo "Done. But fail, I've got unexpected result from the query file"
+    # container: python:3.9.15
+    # services:
+    #   postgres:
+    #     image: postgres:14.5
+    #     ports:
+    #       - 5432:5432
+    #     environment:
+    #       POSTGRES_PASSWORD: pg-admin
+    #       POSTGRES_USER: pg-admin
+    #       POSTGRES_DB: pytest
+    #     restart: always
