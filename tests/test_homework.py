@@ -14,8 +14,7 @@ def query(q):
 
 
 def test_validate_group_count():
-    r = query("""select code, count(*) c, max(price), min(price), sum(price), max(price_date), min(price_date) from stock group by code""")
-    r.sort(key=lambda k: k[0])
+    r = query("""select code, count(*) c, max(price), min(price), sum(price), max(price_date), min(price_date) from stock group by code order by code""")
     assert r == [
           ("A10000", 31, 61740, 47510, 1636360, '2021-01-31', '2021-01-01')
         , ("A10030", 31, 191810, 162390, 5501000, '2021-01-31', '2021-01-01')
