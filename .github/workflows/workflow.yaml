@@ -11,6 +11,8 @@ jobs:
   homework-checker-infra:
     runs-on: ubuntu-22.04
     steps:
+      - name: Change directory
+        run: cd ${{ github.workspace }}
       - name: Build the stack for homework
         run: docker-compose -f docker-compose-hw.yml up -d
       - name: Install Poetry
