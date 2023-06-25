@@ -6,8 +6,7 @@ import psycopg
 """
 
 def query(q):
-    with psycopg.connect(f"host=localhost dbname=stock "
-                         + f"user=stock-importer password=stock") as conn:
+    with psycopg.connect(f"host=localhost dbname=stock user=stock-importer password=stock") as conn:
         with conn.cursor() as cur:
             cur.execute(q)
             return cur.fetchall()

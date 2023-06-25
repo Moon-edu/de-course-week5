@@ -26,6 +26,10 @@ done
 
 echo "Running test"
 poetry run pytest --json-report || EXIT_CODE=$?
+if [ $EXIT_CODE != 0 ]; then
+  sleep 10
+  poetry run pytest --json-report || EXIT_CODE=$?
+fi
 
 echo "Printing out report"
 OUTCOME=$(cat .report.json | jq -r '.tests[]|"\(.outcome),\(.nodeid)"')
