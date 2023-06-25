@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
-      - name: Run tests
+      - name: Your score is...
         run: bash run.sh
       - name: Stop Docker Compose services || echo "Failed to graceful shutdown, ignored"
         run: docker-compose down
