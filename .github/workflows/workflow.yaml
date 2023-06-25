@@ -11,6 +11,8 @@ jobs:
   homework-checker-infra:
     runs-on: ubuntu-22.04
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
       - name: List directory
         run: ls -a ${{ github.workspace }}
       - name: Build the stack for homework
