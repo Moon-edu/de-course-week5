@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Waiting to init PG"
+sleep 5
+
 airflow initdb
 airflow webserver -p 8080 &
 sleep 5s

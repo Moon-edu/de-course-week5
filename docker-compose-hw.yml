@@ -1,7 +1,22 @@
 version: '3'
 
 services:
-  postgres-hw:
+  postgres: # Airflow DB
+    image: postgres:14.5
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 54320:5432
+    hostname: postgres.server.local
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
+
+  postgres-hw: # Stock DB
     image: postgres:14.5
     environment:
       POSTGRES_USER: stock-importer
@@ -11,3 +26,32 @@ services:
       - ./init_hw.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
+    hostname: postgres.server.local
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.7
+
+  airflow:
+    build: .
+    image: airflow-local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    tty: true
+    volumes:
+      - ./homework/dags:/root/airflow/dags
+      - ./shared_dir:/shared_dir
+      - ./airflow.cfg:/root/airflow/airflow.cfg
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+    extra_hosts:
+      - "postgres.server.local:10.5.0.5"
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
