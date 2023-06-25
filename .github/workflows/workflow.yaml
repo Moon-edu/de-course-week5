@@ -34,17 +34,6 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
       - name: Run tests
-        run: cd ${{ github.workspace }} && run.sh
+        run: cd ${{ github.workspace }} && sh run.sh
       - name: Stop Docker Compose services || echo "Failed to graceful shutdown, ignored"
         run: docker-compose down
-    # container: python:3.9.15
-    # services:
-    #   postgres:
-    #     image: postgres:14.5
-    #     ports:
-    #       - 5432:5432
-    #     environment:
-    #       POSTGRES_PASSWORD: pg-admin
-    #       POSTGRES_USER: pg-admin
-    #       POSTGRES_DB: pytest
-    #     restart: always
