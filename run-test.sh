@@ -1,5 +1,28 @@
 #/bin/bash
 EXIT_CODE=0
+sleep 60
+
+RETRY=20
+while [ $RETRY -gt 0 ]; do
+  HAS_DAG=$(curl -s http://localhost:8080/api/experimental/dags/stock/dag_runs | jq -e 'type == "array"')
+  if [ "$HAS_DAG" == "true" ]; then
+    DAG_RESULTS=$(curl -s http://localhost:8080/api/experimental/dags/stock/dag_runs | jq -r '.[]|.state' | sort | uniq)
+    LC=$(echo "$DAG_RESULTS" | wc -l)
+    echo "$DAG_RESULTS"
+    if [ $LC == 1 ] && [ ${DAG_RESULTS[0]} == 'success' ]; then
+      echo "All scheduled has been done, checking result..."
+      RETRY=0
+    fi
+  else
+    echo "DAG stock not found"
+    echo "Total score: 0"
+    exit 1
+  fi
+  echo "Schedules are not done yet, sleep 30 secs & will retry"
+  RETRY=$((RETRY-1))
+  sleep 30
+done
+
 echo "Running test"
 poetry run pytest --json-report || EXIT_CODE=$?
 
@@ -15,6 +38,7 @@ while IFS= read -r line; do
   if [ "$outcome" = "failed" ]; then
     echo "Test $TEST_ID failed"
     TOTAL=0
+    EXIT_CODE=1
   else
     echo "Test $TEST_ID passed, Adding ${SCORE[TEST_ID]}"
     TOTAL=100
