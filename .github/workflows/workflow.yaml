@@ -11,10 +11,8 @@ jobs:
   homework-checker-infra:
     runs-on: ubuntu-22.04
     steps:
-      - name: Change directory
-        run: cd ${{ github.workspace }}
       - name: Build the stack for homework
-        run: docker-compose -f docker-compose-hw.yml up -d
+        run: cd ${{ github.workspace }} && docker-compose -f docker-compose-hw.yml up -d
       - name: Install Poetry
         uses: snok/install-poetry@v1
       - name: Set up python
@@ -34,7 +32,7 @@ jobs:
       - name: Stop Docker Compose services
         run: docker-compose down
       - name: Run tests
-        run: /run.sh
+        run: cd ${{ github.workspace }} && run.sh
     # container: python:3.9.15
     # services:
     #   postgres:
