@@ -8,7 +8,7 @@ on:
     branches:
       - "*:homework/**"
 jobs:
-  homework-checker-infra:
+  week5-homework-checker:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
