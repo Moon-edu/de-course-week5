@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - name: List directory
+      - name: List directory for debugging
         run: ls -a ${{ github.workspace }}
       - name: Build the stack for homework
         run: cd ${{ github.workspace }} && docker-compose -f docker-compose-hw.yml up -d
