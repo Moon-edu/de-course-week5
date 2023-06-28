@@ -6,10 +6,11 @@ RETRY=20
 while [ $RETRY -gt 0 ]; do
   HAS_DAG=$(curl -s http://localhost:8080/api/experimental/dags/stock/dag_runs | jq -e 'type == "array"')
   if [ "$HAS_DAG" == "true" ]; then
-    DAG_RESULTS=$(curl -s http://localhost:8080/api/experimental/dags/stock/dag_runs | jq -r '.[]|.state' | wc -l)
-    LC=$(echo "$DAG_RESULTS" | grep "running" | wc -l)
-    echo "$DAG_RESULTS"
-    if [ $LC != 1 ] && [ ${DAG_RESULTS[0]} == 31 ]; then
+    DAG_RESULTS=$(curl -s http://localhost:8080/api/experimental/dags/stock/dag_runs | jq -r '.[]|.state')
+    ALL_CNT=$(echo "$DAG_RESULTS" | wc -l)
+    RUNNIG_CNT=$(echo "$DAG_RESULTS" | grep "running" | wc -l)
+    echo "All: $RUNNIG_CNT, Running: $RUNNIG_CNT"
+    if [ $RUNNIG_CNT == 0 ] && [ $ALL_CNT == 31 ]; then
       echo "All scheduled has been done, checking result..."
       RETRY=0
     else
