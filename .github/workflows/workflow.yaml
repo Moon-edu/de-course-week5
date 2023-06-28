@@ -16,7 +16,7 @@ jobs:
       - name: List directory for debugging
         run: ls -a ${{ github.workspace }}
       - name: Build the stack for homework
-        run: cd ${{ github.workspace }} && docker-compose -f docker-compose-hw.yml up -d
+        run: cd ${{ github.workspace }} && docker compose -f docker-compose-hw.yml up -d
       - name: Install Poetry
         uses: snok/install-poetry@v1
       - name: Set up python
@@ -35,5 +35,5 @@ jobs:
         run: poetry install --no-interaction --no-root
       - name: Your score is...
         run: bash run-test.sh
-      - name: Stop Docker Compose services || echo "Failed to graceful shutdown, ignored"
-        run: docker-compose down
+      - name: Stop Docker Compose services
+        run: docker compose -f docker-compose-hw.yml down || echo "Failed to graceful shutdown, ignored"
