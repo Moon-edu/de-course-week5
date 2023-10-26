@@ -58,10 +58,47 @@ $ docker compose -f docker-compose-hw.yml up
 조금 기다리신 후 크롬 등의 웹브라우저를 켠 후 localhost:8080에 접속하면 airflow에 접근할 수 있습니다.
 실습때와 같이 로그인 한 후(id: dataengineer, password: dataengineer) 여러분의 pipeline이 요구사항을 만족하며 실행되고 있는지 확인하세요
 """
+from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python_operator import PythonVirtualenvOperator
+from datetime import datetime
+import stock_exporter
 
-with DAG(???) as dag:
-    pass
+with DAG('stock',
+         start_date=datetime(2021, 1, 1),
+         end_date=datetime(2021, 1, 31),
+         schedule_interval="0 0 * * *",
+         catchup=True) as dag:
 
+    STOCK_ENDPOINT_TMPL = "https://raw.githubusercontent.com/Moon-edu/dataset/main/json/stock" \
+                        + "/price-%s.json"
+    
+    CODE_ENDPOINT = "https://raw.githubusercontent.com/Moon-edu/dataset/main/csv/stock/code.csv"
+    CATEGORY_ENDPOINT = "https://raw.githubusercontent.com/Moon-edu/dataset/main/xml/stock/category.xml"
+    
+    OUTPUT_PATH = "/shared_dir/price-%s.json"
+    CODE_OUTPUT_PATH = "/shared_dir/code.csv"
+    CATEGORY_OUTPUT_PATH = "/shared_dir/category.xml"
 
+    code_downloader = BashOperator(
+        task_id='code_download',
+        bash_command=f'curl -k -o {CODE_OUTPUT_PATH} {CODE_ENDPOINT}')
+    
+    category_downloader = BashOperator(
+        task_id='category_download',
+        bash_command=f'curl -k -o {CATEGORY_OUTPUT_PATH} {CATEGORY_ENDPOINT}')
+    
+    price_downloader = BashOperator(
+        task_id='price_download',
+        bash_command=f'curl -k -o {OUTPUT_PATH % "{{ ds }}"} {STOCK_ENDPOINT_TMPL % "{{ ds }}"}')
 
+    price_exporter = PythonVirtualenvOperator(
+        task_id='price_export',
+        python_callable=stock_exporter.run,
+        requirements=["psycopg==3.1.4","xmltodict==0.13.0"],
+        op_args=['{{ ds }}']
+    )
 
+    [code_downloader, category_downloader] >> price_downloader >> price_exporter
+    
+    
