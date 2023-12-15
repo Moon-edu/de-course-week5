@@ -4,17 +4,18 @@ from airflow.operators.python_operator import PythonVirtualenvOperator
 from datetime import datetime
 
 def run_save_postgres(date, CSV_OUTPUT_PATH, XML_OUTPUT_PATH, JSON_OUTPUT_PATH_TMPL):
-    import psycopg
+    import psycopg2 as psycopg
+    from psycopg2.extras import execute_values
     import csv
     import xmltodict
     import json
 
-    def senddata_postgres(list_data):
+    def senddata_postgres(list_stock_data):
         with psycopg.connect(f"host=postgres-hw dbname=stock user=stock-importer password=stock") as conn:
             with conn.cursor() as cur:
-                cur.executemany(f"""
-                    insert into stock(code, name, price, price_date, category) values(%s, %s, %s, %s, %s);
-                """, list_stock_data)
+                execute_values(cur, f"""
+                    insert into stock(code, name, price, price_date, category) values %s;
+                """, list_stock_data, page_size=100000)
             conn.commit()
 
     list_stock_data = [] # [0: code, 1: company, 2: price, 3: date, 4: category]
@@ -58,24 +59,21 @@ with DAG('stock',
 
     csv_downloader = BashOperator(
         task_id='download_csv',
-        bash_command=f'curl -k -o {CSV_OUTPUT_PATH} '
-                     + f'{CSV_ENDPOINT}')
+        bash_command=f'curl -k -o {CSV_OUTPUT_PATH} {CSV_ENDPOINT}')
 
     xml_downloader = BashOperator(
         task_id='download_xml',
-        bash_command=f'curl -k -o {XML_OUTPUT_PATH} '
-                     + f'{XML_ENDPOINT}')
+        bash_command=f'curl -k -o {XML_OUTPUT_PATH} {XML_ENDPOINT}')
 
     json_downloader = BashOperator(
         task_id='download_json',
-        bash_command=f'curl -k -o {JSON_OUTPUT_PATH_TMPL % "{{ ds }}"} '
-                     + f'{JSON_ENDPOINT_TMPL % "{{ ds }}"}')
+        bash_command=f'curl -k -o {JSON_OUTPUT_PATH_TMPL % "{{ ds }}"} {JSON_ENDPOINT_TMPL % "{{ ds }}"}')
 
     db_saver = PythonVirtualenvOperator(
         task_id='db_save',
         python_callable=run_save_postgres,
         op_args=['{{ ds }}', CSV_OUTPUT_PATH, XML_OUTPUT_PATH, JSON_OUTPUT_PATH_TMPL],
-        requirements=["psycopg==3.1.4", "xmltodict==0.13.0"]
+        requirements=["psycopg2==2.9.1", "xmltodict==0.13.0"]
     )
     csv_downloader >> xml_downloader >> json_downloader >> db_saver
 
