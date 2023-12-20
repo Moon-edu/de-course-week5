@@ -42,7 +42,7 @@ with DAG('stock',
     export = PythonVirtualenvOperator(
         task_id='export',
         python_callable=stock_export.run,
-        requirements=["psycopg==3.1.4", "xmltodict==0.13.0"],
+        requirements=["psycopg2==2.9.3", "xmltodict==0.13.0"],
         op_args=["{{ ds }}"]
     )
 

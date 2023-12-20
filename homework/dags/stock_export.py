@@ -2,15 +2,16 @@ def run(datadate):
     import csv
     import xmltodict
     import json
-    import psycopg
+    import psycopg2
+    from psycopg2.extras import execute_batch
 
     # postgres로 export하는 함수 설정 (execute_many -> execute로 변경)
     def export_to_postgres(data):
-        with psycopg.connect(f"host=postgres-hw dbname=stock "
+        with psycopg2.connect(f"host=postgres-hw dbname=stock "
                              + f"user=stock-importer password=stock") as conn:
             with conn.cursor() as cur:
-                for row in data:
-                    cur.execute("INSERT INTO stock VALUES (%s, %s, %s, %s, %s)", row)
+                psycopg2.extras.execute_batch(cur, "INSERT INTO stock VALUES (%s, %s, %s, %s, %s)", data)
+
             conn.commit()
 
     # code
