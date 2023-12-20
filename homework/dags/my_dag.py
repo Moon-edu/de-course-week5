@@ -26,20 +26,17 @@ with DAG('stock',
     # 파일 다운로드 오퍼레이터_code, category, price 각각 실행
     download_code = BashOperator(
         task_id='download_code',
-        bash_command=f'curl -k -o {CODE_OUTPUT} '
-                     + f'{CODE_INPUT}'
+        bash_command=f'curl -k -o {CODE_OUTPUT} {CODE_INPUT}'
     )
 
     download_category = BashOperator(
         task_id='download_category',
-        bash_command=f'curl -k -o {CATEGORY_OUTPUT} '
-                     + f'{CATEGORY_INPUT}'
+        bash_command=f'curl -k -o {CATEGORY_OUTPUT} {CATEGORY_INPUT}'
     )
 
     download_price = BashOperator(
         task_id='download_price',
-        bash_command=f'curl -k -o {PRICE_OUTPUT % "{{ ds }}"} '
-                     + f'{PRICE_INPUT % "{{ ds }}"}'
+        bash_command=f'curl -k -o {PRICE_OUTPUT % "{{ ds }}"} {PRICE_INPUT % "{{ ds }}"}'
     )
 
     export = PythonVirtualenvOperator(

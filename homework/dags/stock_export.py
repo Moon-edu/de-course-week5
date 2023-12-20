@@ -4,16 +4,13 @@ def run(datadate):
     import json
     import psycopg
 
-    # postgres로 export하는 함수 설정
+    # postgres로 export하는 함수 설정 (execute_many -> execute로 변경)
     def export_to_postgres(data):
         with psycopg.connect(f"host=postgres-hw dbname=stock "
                              + f"user=stock-importer password=stock") as conn:
             with conn.cursor() as cur:
-                cur.executemany(
-                    """
-                    INSERT INTO stock
-                    VALUES (%s, %s, %s, %s, %s)
-                    """, data)
+                for row in data:
+                    cur.execute("INSERT INTO stock VALUES (%s, %s, %s, %s, %s)", row)
             conn.commit()
 
     # code
